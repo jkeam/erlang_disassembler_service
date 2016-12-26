@@ -16,7 +16,7 @@ const logger = new (winston.Logger)({
 const handlePost = (req, res) => {
   const disassembler = new Disassembler(logger);
   const busboy = new Busboy({ headers: req.headers });
-  let code = ""; 
+  let code = "";
 
   const writeOutput = (bytecode) => {
     res.writeHead(200, {'Content-Type': 'application/json'});
@@ -28,7 +28,7 @@ const handlePost = (req, res) => {
       code = val;
     }
   });
-  
+
   busboy.on('finish', () => {
     disassembler.run(code, writeOutput);
   });
