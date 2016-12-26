@@ -2,32 +2,38 @@
 %% -*- erlang -*-
 %% %%! -smp enable -sname factorial -mnesia debug verbose
 main(Args)->
-    % Pretend source
-    % Source = "%% Demo\nmain(_Args) ->\n    io:format(erlang:system_info(smp_support)).\n",
+    GenerateBeamFilename = fun(Filename) ->
+      lists:concat([Filename, ".beam"])
+    end,
 
-    Diss = fun(Filename, Source) ->
-      % create source file
-      file:write_file(Filename, ["%% ", Filename, "\n-module(jon).\n-export([main/1]).\n\n", Source]),
+    WriteBeamFile = fun(BeamFilename, BeamCode) ->
+      escript:create(BeamFilename, [{beam, BeamCode}])
+    end,
 
-      % compile erl
-      {ok, _, BeamCode} = compile:file(Filename, [binary, debug_info]),
-
-      % create beam file
-      BeamFile = lists:concat([Filename, ".beam"]),
-      escript:create(BeamFile, [{beam, BeamCode}]),
-
-      % create diss file
-      {ok,F}=file:open(BeamFile++".dmp",[write]),
-      io:format(F,"~p.~n",[beam_disasm:file(BeamFile)]),
+    WriteDissFile = fun(BeamFilename) ->
+      {ok,F}=file:open(BeamFilename++".dmp",[write]),
+      io:format(F,"~p.~n",[beam_disasm:file(BeamFilename)]),
       file:close(F)
     end,
-    % lists:foreach(fun(Arg) -> io:format("~p~n", [Arg]) end, Args).
+
+    Diss = fun({ok, Filename, BeamCode}) ->
+        BeamFilename = GenerateBeamFilename(Filename),
+        WriteBeamFile(BeamFilename, BeamCode),
+        WriteDissFile(BeamFilename);
+        (error) -> io:format("~p~n", ["Error"])
+    end,
+
+    Run = fun(Filename, Source) ->
+      % create source file
+      file:write_file(Filename, [Source]),
+
+      % compile erl
+      case compile:file(Filename, [binary, debug_info]) of
+        % second arg is module name
+        {ok, _, BeamCode} -> Diss({ok, Filename, BeamCode});
+        error -> Diss(error)
+      end
+    end,
     Filename = lists:nth(1, Args),
     Source = lists:nth(2, Args),
-    io:format("~p~n", [Filename]),
-    io:format("~p~n", [Source]),
-    Diss(Filename, Source).
-
-%./diss doc.erl "%% Demo
-% main(_Args) ->
-  % io:format(erlang:system_info(smp_support))."
+    Run(Filename, Source).
