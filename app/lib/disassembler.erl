@@ -35,7 +35,7 @@ main(Args)->
         WriteBeamFile(BeamFilename, BeamCode),
         WriteDissFile(BeamFilename, DissFilename),
         case Readlines(DissFilename) of
-          {ok, Data} -> Data;
+          {ok, Data} -> {ok, Data};
           {error, Reason} -> {error, Reason}
         end
     end,
@@ -53,8 +53,13 @@ main(Args)->
         error -> {error, "Compilation error"}
       end,
 
+      % cleanup
       DeleteFiles([Filename, BeamFilename, DissFilename]),
-      io:format("~p~n", [Output])
+
+      % output
+      case Output of
+        {_, Result} -> io:format("~p~n", [Result])
+      end
     end,
     Filename = lists:nth(1, Args),
     Source = lists:nth(2, Args),

@@ -19,7 +19,18 @@ describe("Disassembler", function() {
 -module(hello).
 -export([hello_world/0]).
 
-hello_world() -> io:fwrite("hello, world\n").`;
+hello_world() -> io:fwrite("hello, world").`;
+
+    disassembler.disassemble({code}).then((obj) => {
+      expect(obj.result).to.not.be.null;
+      done();
+    }).catch((e) => {
+      done(e);
+    })
+  });
+
+  it("can handle errors", function(done) {
+    const code = `this is not valid code`;
 
     disassembler.disassemble({code}).then((obj) => {
       expect(obj.result).to.not.be.null;
