@@ -58,7 +58,7 @@ main(Args)->
 
       % output
       case Output of
-        {_, Result} -> io:format("~p~n", [Result])
+        {_, Result} -> io:format(Result)
       end
     end,
     Filename = lists:nth(1, Args),

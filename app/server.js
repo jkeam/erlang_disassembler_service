@@ -25,7 +25,9 @@ const handlePost = (req, res) => {
 
   busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) => {
     if (fieldname == 'code') {
-      code = val;
+      // have to replace \\n with real newlines for erlang
+      code = val.replace(/\\n/g, `
+      `);
     }
   });
 
