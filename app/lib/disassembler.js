@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 const exec = require('child_process').exec;
+const uuid = require('uuid/v4');
 
 class Disassembler {
 
@@ -17,11 +18,16 @@ class Disassembler {
     });
   }
 
+  generateUuid() {
+    return uuid().replace(/-/, '');
+  }
+
   // disassembles the given source class file
   disassemble(obj) {
     const code = obj.code;
     return new Promise( (resolve, reject) => {
-      const cmd = `./app/lib/disassembler.rb '${code}'`;
+      const randomFilename = `${this.generateUuid()}.erl`;
+      const cmd = `./app/lib/disassembler.erl ${randomFilename} '${code}'`;
       exec(cmd, (error, stdout, stderr) => {
         if (stderr) {
           this.logger.error(stderr);

@@ -3,8 +3,6 @@
 %% %%! -smp enable -sname factorial -mnesia debug verbose
 main(Args)->
     DeleteFiles = fun(Files) ->
-      % ok = file:del_dir( "docs" ),
-      % ok = file:delete( "input.txt" )
       lists:foreach(fun(File) -> file:delete(File) end, Files)
     end,
 
