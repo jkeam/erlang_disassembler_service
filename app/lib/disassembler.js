@@ -27,7 +27,7 @@ class Disassembler {
     const code = obj.code;
     return new Promise( (resolve, reject) => {
       const randomFilename = `${this.generateUuid()}.erl`;
-      const cmd = `./app/lib/disassembler.erl ${randomFilename} '${code}'`;
+      const cmd = `./app/lib/disassembler.erl tmp/${randomFilename} '${code}'`;
       exec(cmd, (error, stdout, stderr) => {
         if (stderr) {
           this.logger.error(stderr);

@@ -15,7 +15,11 @@ describe("Disassembler", function() {
   const disassembler = new Disassembler(logger);
 
   it("can disassemble", function(done) {
-    const code = "puts 'hi'"
+    const code = `%% Demo
+-module(hello).
+-export([hello_world/0]).
+
+hello_world() -> io:fwrite("hello, world\n").`;
 
     disassembler.disassemble({code}).then((obj) => {
       expect(obj.result).to.not.be.null;

@@ -21,10 +21,6 @@ main(Args)->
       end
     end,
 
-    GenerateBeamFilename = fun(Filename) ->
-      lists:concat([Filename, ".beam"])
-    end,
-
     WriteBeamFile = fun(BeamFilename, BeamCode) ->
       escript:create(BeamFilename, [{beam, BeamCode}])
     end,
@@ -47,7 +43,7 @@ main(Args)->
     Run = fun(Filename, Source) ->
       % create source file
       file:write_file(Filename, [Source]),
-      BeamFilename = GenerateBeamFilename(Filename),
+      BeamFilename = lists:concat([Filename, ".beam"]),
       DissFilename = lists:concat([BeamFilename, ".dmp"]),
 
       % compile erl
