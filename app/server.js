@@ -27,7 +27,7 @@ const handlePost = (req, res) => {
     if (fieldname == 'code') {
       // have to replace \\n with real newlines for erlang
       code = val.replace(/\\n/g, `
-      `);
+`);
     }
   });
 
