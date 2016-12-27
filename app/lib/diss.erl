@@ -4,8 +4,8 @@
 main(Args)->
     DecodeData = fun(Data) ->
       case unicode:characters_to_list(Data) of
-        {incomplete, _, _} -> error;
-        {error, _, _} -> error;
+        {incomplete, _, _} -> {error, "Problem decoding"};
+        {error, _, _} -> {error, "Problem decoding"};
         List -> List
       end
     end,
@@ -13,7 +13,7 @@ main(Args)->
     Readlines = fun(Filename) ->
       case file:read_file(Filename) of
         {ok, Data} -> DecodeData(Data);
-        {error, _} -> error
+        {error, _} -> {error, "Problem reading file"}
       end
     end,
 
@@ -39,9 +39,8 @@ main(Args)->
         DissFilename = WriteDissFile(BeamFilename),
         case Readlines(DissFilename) of
           {ok, Data} -> Data;
-          error -> error
-        end;
-        (error) -> error
+          {error, Reason} -> {error, Reason}
+        end
     end,
 
     Run = fun(Filename, Source) ->
@@ -52,7 +51,7 @@ main(Args)->
       Output = case compile:file(Filename, [binary, debug_info]) of
         % second arg is module name
         {ok, _, BeamCode} -> Diss({ok, Filename, BeamCode});
-        error -> Diss(error)
+        error -> {error, "Compilation error"}
       end,
       io:format("~p~n", [Output])
     end,
