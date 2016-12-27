@@ -2,11 +2,17 @@
 %% -*- erlang -*-
 %% %%! -smp enable -sname factorial -mnesia debug verbose
 main(Args)->
+    DeleteFiles = fun(Files) ->
+      % ok = file:del_dir( "docs" ),
+      % ok = file:delete( "input.txt" )
+      lists:foreach(fun(File) -> file:delete(File) end, Files)
+    end,
+
     DecodeData = fun(Data) ->
       case unicode:characters_to_list(Data) of
         {incomplete, _, _} -> {error, "Problem decoding"};
         {error, _, _} -> {error, "Problem decoding"};
-        List -> List
+        List -> {ok, List}
       end
     end,
 
@@ -25,18 +31,15 @@ main(Args)->
       escript:create(BeamFilename, [{beam, BeamCode}])
     end,
 
-    WriteDissFile = fun(BeamFilename) ->
-      DissFilename = lists:concat([BeamFilename, ".dmp"]),
+    WriteDissFile = fun(BeamFilename, DissFilename) ->
       {ok,F}=file:open(DissFilename, [write]),
       io:format(F,"~p.~n",[beam_disasm:file(BeamFilename)]),
-      file:close(F),
-      DissFilename
+      file:close(F)
     end,
 
-    Diss = fun({ok, Filename, BeamCode}) ->
-        BeamFilename = GenerateBeamFilename(Filename),
+    Diss = fun({ok, BeamFilename, DissFilename, BeamCode}) ->
         WriteBeamFile(BeamFilename, BeamCode),
-        DissFilename = WriteDissFile(BeamFilename),
+        WriteDissFile(BeamFilename, DissFilename),
         case Readlines(DissFilename) of
           {ok, Data} -> Data;
           {error, Reason} -> {error, Reason}
@@ -46,13 +49,17 @@ main(Args)->
     Run = fun(Filename, Source) ->
       % create source file
       file:write_file(Filename, [Source]),
+      BeamFilename = GenerateBeamFilename(Filename),
+      DissFilename = lists:concat([BeamFilename, ".dmp"]),
 
       % compile erl
       Output = case compile:file(Filename, [binary, debug_info]) of
         % second arg is module name
-        {ok, _, BeamCode} -> Diss({ok, Filename, BeamCode});
+        {ok, _, BeamCode} -> Diss({ok, BeamFilename, DissFilename, BeamCode});
         error -> {error, "Compilation error"}
       end,
+
+      DeleteFiles([Filename, BeamFilename, DissFilename]),
       io:format("~p~n", [Output])
     end,
     Filename = lists:nth(1, Args),
