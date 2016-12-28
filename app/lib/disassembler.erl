@@ -47,9 +47,10 @@ main(Args)->
       DissFilename = lists:concat([BeamFilename, ".dmp"]),
 
       % compile erl
-      Output = case compile:file(Filename, [binary, strong_validation, return]) of
+      Output = case compile:file(Filename, [binary, return]) of
         % second arg is module name
         {ok, _, BeamCode} -> Diss({ok, BeamFilename, DissFilename, BeamCode});
+        {ok, _, BeamCode, _} -> Diss({ok, BeamFilename, DissFilename, BeamCode});
         {error, Errors, _} -> {error, Errors}
       end,
 
