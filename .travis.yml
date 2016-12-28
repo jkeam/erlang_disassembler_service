@@ -6,4 +6,6 @@ otp_release:
 before_install:
   - nvm install 7.3.0
   - nvm use 7.3.0
-script: npm test
+script:
+  - npm install
+  - npm test
