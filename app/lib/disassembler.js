@@ -30,15 +30,15 @@ class Disassembler {
       const randomFilename = `${this.generateUuid()}.erl`;
       const cmd = `./app/lib/disassembler.erl tmp/${randomFilename} '${code}'`;
       exec(cmd, (error, stdout, stderr) => {
-        if (stderr) {
-          this.logger.error(stderr);
-          reject({
-            errors: stderr
-          });
+        if (error) {
+          this.logger.error(`${this.guid}: Error -> ${error}`);
+          reject({ errors: error });
+        } else if (stderr) {
+          this.logger.error(`${this.guid}: Stderr-> ${stderr}`);
+          reject({ errors: stderr });
         } else {
-          resolve({
-            result: stdout
-          });
+          this.logger.verbose(`${this.guid}: Disassembling successful`);
+          resolve({ result: stdout });
         }
       });
     });
