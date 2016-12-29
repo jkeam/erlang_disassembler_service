@@ -4,8 +4,9 @@ const uuid = require('uuid/v4');
 
 class Disassembler {
 
-  constructor(newLogger) {
-    this.logger = newLogger;
+  constructor(options={logger, guid}) {
+    this.logger = options.logger;
+    this.guid = options.guid;
   }
 
   run(code, done) {
