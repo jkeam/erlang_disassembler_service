@@ -12,7 +12,7 @@ const logger  = new (winston.Logger)({
 const Disassembler = require("../app/lib/disassembler");
 
 describe("Disassembler", function() {
-  const disassembler = new Disassembler(logger);
+  const disassembler = new Disassembler({logger, guid: '232'});
 
   it("can disassemble", function(done) {
     const code = `%% Demo

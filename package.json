@@ -20,10 +20,10 @@
     "chai-spies": "^0.7.1",
     "mocha": "^3.0.2"
   },
+  "homepage": "https://github.com/jkeam/erlang_disassembler_service#readme",
   "dependencies": {
+    "base_disassembler_service": "jkeam/base_disassembler_service",
     "bluebird": "^3.4.6",
-    "busboy": "^0.2.13",
-    "uuid": "^3.0.1",
-    "winston": "^2.2.0"
+    "uuid": "^3.0.1"
   }
 }
