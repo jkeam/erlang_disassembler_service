@@ -1,5 +1,5 @@
 const Promise = require('bluebird');
-const exec = require('child_process').exec;
+const exec = require('child_process').execFile;
 const uuid = require('uuid/v4');
 
 class Disassembler {
@@ -28,12 +28,8 @@ class Disassembler {
     const code = obj.code;
     return new Promise( (resolve, reject) => {
       const randomFilename = `${this.generateUuid()}.erl`;
-      const cmd = `./app/lib/disassembler.erl tmp/${randomFilename} '${code}'`;
-      exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-          this.logger.error(`${this.guid}: Error -> ${error}`);
-          reject({ errors: error });
-        } else if (stderr) {
+      exec('./app/lib/disassembler.erl', [`tmp/${randomFilename}`, `'${code}'`], {shell: '/bin/bash'}, (error, stdout, stderr) => {
+        if (stderr) {
           this.logger.error(`${this.guid}: Stderr-> ${stderr}`);
           reject({ errors: stderr });
         } else {
