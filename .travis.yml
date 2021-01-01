@@ -1,11 +1,13 @@
 language: erlang
 otp_release:
-  - 18.0
-  - 17.5
-  - R16B03
+  - 12.04
+  - 14.04
+  - 16.04
+  - 18.04
+  - 20.04
 before_install:
-  - nvm install 7.3.0
-  - nvm use 7.3.0
+  - nvm install 15
+  - nvm use 15
 script:
   - npm install
   - npm test

@@ -1,43 +1,34 @@
-const chai    = require("chai");
+const chai    = require('chai');
 const expect  = chai.expect;
 const spies = require('chai-spies');
 chai.use(spies);
 
-// use null logger
-const winston = require('winston');
-const logger  = new (winston.Logger)({
-  transports: []
-});
+const Disassembler = require('../app/lib/disassembler');
 
-const Disassembler = require("../app/lib/disassembler");
+describe('Disassembler', function() {
+  const disassembler = new Disassembler({logger: console, guid: '232'});
 
-describe("Disassembler", function() {
-  const disassembler = new Disassembler({logger, guid: '232'});
-
-  it("can disassemble", function(done) {
+  it('can disassemble', function(done) {
     const code = `%% Demo
 -module(hello).
 -export([hello_world/0]).
 
 hello_world() -> io:fwrite("hello, world").`;
-
-    disassembler.disassemble({code}).then((obj) => {
+    const after = (obj) => {
       expect(obj.result).to.not.be.null;
+      expect(obj.error).to.be.undefined;
       done();
-    }).catch((e) => {
-      done(e);
-    })
+    };
+    disassembler.run(code, after);
   });
 
-  it("can handle errors", function(done) {
+  it('can handle errors', function(done) {
     const code = `this is not valid code`;
-
-    disassembler.disassemble({code}).then((obj) => {
-      expect(obj.result).to.not.be.null;
+    const after = (obj) => {
+      expect(obj.error).to.not.be.null;
+      expect(obj.result).to.be.undefined;
       done();
-    }).catch((e) => {
-      done(e);
-    })
+    };
+    disassembler.run(code, after);
   });
-
 });

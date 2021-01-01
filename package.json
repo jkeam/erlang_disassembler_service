@@ -1,7 +1,7 @@
 {
   "name": "erlang_disassembler_service",
   "version": "1.0.0",
-  "description": "A Erlang disassembler micro service.",
+  "description": "An Erlang disassembler micro service.",
   "main": "./app/server.js",
   "scripts": {
     "start": "node ./app/server.js",
@@ -22,8 +22,7 @@
   },
   "homepage": "https://github.com/jkeam/erlang_disassembler_service#readme",
   "dependencies": {
-    "base_disassembler_service": "jkeam/base_disassembler_service",
-    "bluebird": "^3.4.6",
-    "uuid": "^3.0.1"
+    "fs-extra": "^9.0.1",
+    "uuid": "^8.3.2"
   }
 }

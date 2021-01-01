@@ -1,0 +1,27 @@
+FROM erlang:23
+
+# install wget
+RUN apt-get update && apt-get -f install && apt-get install wget
+
+# install node and npm
+RUN wget -qO- https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get install -y nodejs build-essential
+RUN wget -qO- https://npmjs.org/install.sh | bash -
+
+# create app dir
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# install app dependencies
+COPY package.json /usr/src/app/
+RUN npm install
+
+# bundle app source
+COPY . /usr/src/app
+
+# switch user
+RUN chown -R nobody ./tmp
+USER nobody
+
+EXPOSE 3000
+ENTRYPOINT ["npm", "start"]

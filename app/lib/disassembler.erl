@@ -3,7 +3,7 @@
 %% %%! -smp enable -sname factorial -mnesia debug verbose
 main(Args)->
     DeleteFiles = fun(Files) ->
-      lists:foreach(fun(File) -> file:delete(File) end, Files)
+     lists:foreach(fun(File) -> file:delete(File) end, Files)
     end,
 
     DecodeData = fun(Data) ->
@@ -40,9 +40,9 @@ main(Args)->
         end
     end,
 
-    Run = fun(Filename, Source) ->
+    Run = fun(BaseFilename) ->
       % create source file
-      file:write_file(Filename, [Source]),
+      Filename = lists:concat([BaseFilename, ".erl"]),
       BeamFilename = lists:concat([Filename, ".beam"]),
       DissFilename = lists:concat([BeamFilename, ".dmp"]),
 
@@ -63,5 +63,4 @@ main(Args)->
       end
     end,
     Filename = lists:nth(1, Args),
-    Source = lists:nth(2, Args),
-    Run(Filename, Source).
+    Run(Filename).
